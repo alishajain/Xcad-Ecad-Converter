@@ -1,0 +1,3 @@
+Sphere : Ball
+Cylinder : Rod
+Box : Cuboid

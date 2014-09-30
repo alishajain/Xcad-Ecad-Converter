@@ -1,5 +1,5 @@
 %{
-#include "main_class.h" 
+#include "main_class.h" //class for writing files
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -33,7 +33,7 @@ int in (int i)
 %%
 
 converter:
-	converter entity_type{ s1.store_string_values($2, i, 't'); }
+	converter entity_type { s1.store_string_values($2, i, 't'); }
         | converter entity_name { s1.store_string_values($2, i, 'n'); }
         | converter col_mat { s1.store_string_values($2, i, 'c'); }
         | converter values { s1.store_values($2, i); in(i); i++; }

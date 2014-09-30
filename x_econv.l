@@ -10,22 +10,13 @@ using namespace std;
 
 %}
 
+/* name definitions */
 digit	[0-9]+
 float	{digit}*"."{digit}*
 word	[a-zA-Z]+
-start_x	[(]
-end_x	[)]
-start_e [{]
-end_e	[}]
-comma	[,]
-wc	{word}{comma}
-fc	{float}{comma}
-
-e_format   {start_e}{word}{float}+{word}{end_e}
-x_format   {start_x}{wc}{fc}+{word}{end_x}
 
 %%
-[ \t\n] ;
+[ \t\n] ;	/* Ignores white spaces and end line */
 
 Sphere|Cylinder|Box|Ball|Rod|Cuboid	{ yylval.c = strdup(yytext); return entity_type; }
 

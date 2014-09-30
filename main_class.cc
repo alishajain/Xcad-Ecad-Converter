@@ -81,7 +81,8 @@ void select::WriteEcad_type(string s[1024], int i)
 void select::WriteEcad_name(string s[1024], int i)
 {
         ofstream f(exp_f_name.c_str(), ios::app);
-        f << s[i] << endl;
+	if (s[i] != "")
+	 f << s[i] << endl;
 }
 
 void select::WriteEcad_material(string s[1024], int i)
@@ -104,6 +105,7 @@ void select::WriteEcad_material(string s[1024], int i)
 void select::WriteEcad_values(float s)
 {
         ofstream f(exp_f_name.c_str(), ios::app);
+	if (s >=0 || s < 0)
 	f << s << endl;
 }
 //////////////////////////////WRITE XCAD FILE////////////////////
@@ -128,7 +130,8 @@ void select::WriteXcad_type(string s[1024], int i)
 void select::WriteXcad_name(string s[1024], int i)
 {
         ofstream f(exp_f_name.c_str(), ios::app);
-        f << s[i] << ',';
+        if (s[i] != "")
+	f << s[i] << ", ";
 }
 
 void select::WriteXcad_color(string s[1024], int i)
@@ -150,7 +153,8 @@ void select::WriteXcad_color(string s[1024], int i)
 void select::WriteXcad_values(float s)
 {
         ofstream f(exp_f_name.c_str(), ios::app);
-        f << s << ',';
+        if(s >= 0 || s < 0)
+	f << s << ", ";
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -165,11 +169,12 @@ void select::Write_file()
 		WriteEcad_name(name, j);
 		if(type[j] == "Sphere")
 		{
-		    int x1, x2, y, z;
+		    float x1, x2, y, z;
 		    x1 = values[j] + (values[j+3]/2);
 		    y = values[j+1];
 		    z = values[j+2];
 		    x2 = x1 - values[j+3];
+
 		    WriteEcad_values(x1);
                     WriteEcad_values(y);
                     WriteEcad_values(z);
@@ -180,35 +185,51 @@ void select::Write_file()
 		}
 		else if(type[j] == "Cylinder")
 		{
-		    int c_x, c_y, c_z, dc_x, dc_y, dc_z, l, r;
-		    c_x = (values[j] + values[j+3])/2;
-		    c_y = (values[j+1] + values[j+4])/2;
-		    c_z = (values[j+2] + values[j+5])/2;
+		    float c_x, c_y, c_z, dc_x, dc_y, dc_z, l, r, r_x, r_y, r_z, d;
+		    c_x = values[j] + (values[j+3])/2;
+		    c_y = values[j+1] + (values[j+4])/2;
+		    c_z = values[j+2] + (values[j+5])/2;
 		    
-		    l = sqrt( (values[j]-values[j+3])*2 + (values[j+1]-values[j+4])*2 + (values[j+2]-values[j+5])*2 );
+		    l = sqrt( pow((values[j]-values[j+3]),2) + pow((values[j+1]-values[j+4]),2) + pow((values[j+2]-values[j+5]),2) );
 		    r = values[j+6]/2;
+
+		    r_x = values[j+3] - values[j];
+		    r_y = values[j+4] - values[j+1];
+		    r_z = values[j+5] - values[j+2];
+
+		    d = sqrt( pow(r_x, 2) + pow(r_y, 2) + pow(r_z, 2) );
+
+		    dc_x = r_x/d;
+		    dc_y = r_y/d;
+		    dc_z = r_z/d;
 
 		    WriteEcad_values(c_x);
                     WriteEcad_values(c_y);
                     WriteEcad_values(c_z);
 
-/*                    WriteEcad_values(dc_x);
+                    WriteEcad_values(dc_x);
                     WriteEcad_values(dc_y);
                     WriteEcad_values(dc_z);
-*/
+
                     WriteEcad_values(l);
                     WriteEcad_values(r);
 		}
 		else if(type[j] == "Box")
 		{
-		    int c_x, c_y, c_z, l_x, l_y, l_z, dc_x, dc_y, dc_z;
+		    float c_x, c_y, c_z, l_x, l_y, l_z, dc_x, dc_y, dc_z, r_x, r_y, r_z, d;
 		    l_x = values[j];
                     l_y = values[j+1];
                     l_z = values[j+2];
 
-		    c_x = values[j+1] + values[j+4];
-                    c_x = values[j+2] + values[j+5];
-                    c_x = values[j+3] + values[j+6];
+		    c_x = values[j+3] + (values[j])/2;
+                    c_y = values[j+4] + (values[j+1])/2;
+                    c_z = values[j+5] + (values[j+2])/2;
+
+                    d = sqrt( pow(l_x, 2) + pow(l_y, 2) + pow(l_z, 2) );
+
+                    dc_x = l_x/d;
+                    dc_y = l_y/d;
+                    dc_z = l_z/d;
 
                     WriteEcad_values(c_x);
                     WriteEcad_values(c_y);
@@ -217,11 +238,11 @@ void select::Write_file()
                     WriteEcad_values(l_x);
                     WriteEcad_values(l_y);
                     WriteEcad_values(l_z);
-/*
+
                     WriteEcad_values(dc_x);
                     WriteEcad_values(dc_y);
                     WriteEcad_values(dc_z);
-*/
+
 		}
 
 		WriteEcad_material(col_mat, j+1);
@@ -236,17 +257,24 @@ void select::Write_file()
 
 		if (type[j] == "Ball")
 		{
-		    int c_x, c_y, c_z, d;
-                    WriteEcad_values(c_x);
-                    WriteEcad_values(c_y);
-                    WriteEcad_values(c_z);
+		    float c_x, c_y, c_z, d;
 
-		    WriteEcad_values(d);
+		    c_x = (values[j] + values[j+3])/2;
+		    c_y = (values[j+1] + values[j+4])/2;
+		    c_z = (values[j+2] + values[j+5])/2;
+
+                    d = sqrt( pow((values[j]-values[j+3]),2) + pow((values[j+1]-values[j+4]),2) + pow((values[j+2]-values[j+5]),2) );
+
+                    WriteXcad_values(c_x);
+                    WriteXcad_values(c_y);
+                    WriteXcad_values(c_z);
+
+		    WriteXcad_values(d);
 		}
 
 		else if (type[j] == "Rod")
 		{
-		    int s_x, s_y, s_z, e_x, e_y, e_z, d;
+		    float s_x, s_y, s_z, e_x, e_y, e_z, d;
 		    d = 2*values[j+7];
 
                     WriteEcad_values(s_x);
@@ -261,7 +289,7 @@ void select::Write_file()
 
 		else if(type[j] == "Cuboid")
 		{
-		    int l_x, l_y, l_z, s_x, s_y, s_z, r_x, r_y, r_z;
+		    float l_x, l_y, l_z, s_x, s_y, s_z, r_x, r_y, r_z;
 
                     WriteEcad_values(l_x);
                     WriteEcad_values(l_y);

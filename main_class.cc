@@ -170,6 +170,7 @@ void select::Write_file()
 		if(type[j] == "Sphere")
 		{
 		    float x1, x2, y, z;
+/**/
 		    x1 = values[j] + (values[j+3]/2);
 		    y = values[j+1];
 		    z = values[j+2];
@@ -274,34 +275,53 @@ void select::Write_file()
 
 		else if (type[j] == "Rod")
 		{
-		    float s_x, s_y, s_z, e_x, e_y, e_z, d;
+		    float s_x, s_y, s_z, e_x, e_y, e_z, d, k;
 		    d = 2*values[j+7];
 
-                    WriteEcad_values(s_x);
-                    WriteEcad_values(s_y);
-                    WriteEcad_values(s_z);
+		    k = sqrt( pow( (values[j+6])/2, 2) / ( pow( values[j+3], 2) + pow( values[j+4], 2) + pow( values[j+5], 2) ) );
 
-                    WriteEcad_values(e_x);
-                    WriteEcad_values(e_y);
-                    WriteEcad_values(e_z);
+		    s_x = values[j] + (values[j+3]*k);
+                    s_y = values[j+1] + (values[j+4]*k);
+                    s_z = values[j+2] + (values[j+5]*k);
 
+                    e_x = values[j] - (values[j+3]*k);
+                    e_y = values[j+1] - (values[j+4]*k);
+                    e_z = values[j+2] - (values[j+5]*k);
+
+                    WriteXcad_values(s_x);
+                    WriteXcad_values(s_y);
+                    WriteXcad_values(s_z);
+
+                    WriteXcad_values(e_x);
+                    WriteXcad_values(e_y);
+                    WriteXcad_values(e_z);
+
+		    WriteXcad_values(d);
 		}
 
 		else if(type[j] == "Cuboid")
 		{
 		    float l_x, l_y, l_z, s_x, s_y, s_z, r_x, r_y, r_z;
 
-                    WriteEcad_values(l_x);
-                    WriteEcad_values(l_y);
-                    WriteEcad_values(l_z);
+		    l_x = values[j+3];
+                    l_y = values[j+4];
+                    l_z = values[j+5];
 
-                    WriteEcad_values(s_x);
-                    WriteEcad_values(s_y);
-                    WriteEcad_values(s_z);
+		    s_x = values[j] - (l_x/2);
+                    s_y = values[j] - (l_y/2);
+                    s_z = values[j] - (l_z/2);
 
-                    WriteEcad_values(r_x);
-                    WriteEcad_values(r_y);
-                    WriteEcad_values(r_z);
+                    WriteXcad_values(l_x);
+                    WriteXcad_values(l_y);
+                    WriteXcad_values(l_z);
+
+                    WriteXcad_values(s_x);
+                    WriteXcad_values(s_y);
+                    WriteXcad_values(s_z);
+
+                    WriteXcad_values(r_x);
+                    WriteXcad_values(r_y);
+                    WriteXcad_values(r_z);
 
 		}
 

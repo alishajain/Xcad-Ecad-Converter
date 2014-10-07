@@ -311,6 +311,10 @@ void select::Write_file()
                     s_y = values[j] - (l_y/2);
                     s_z = values[j] - (l_z/2);
 
+		    r_x = (acos(values[j+6])*180*7)/22;
+		    r_y = (acos(values[j+7])*180*7)/22;
+		    r_z = (acos(values[j+8])*180*7)/22;
+
                     WriteXcad_values(l_x);
                     WriteXcad_values(l_y);
                     WriteXcad_values(l_z);

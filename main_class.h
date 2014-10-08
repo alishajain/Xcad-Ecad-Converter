@@ -10,12 +10,12 @@ using namespace std;
 class select 
 {
 	public:
-	string exp_f_name, f_name, type[1024], name[1024], col_mat[1024];
+	string exp_f_name, type[1024], name[1024], col_mat[1024];
 	float values[1024];
 	int ch;
 	int no;
 
-	int start_function();
+	int start_function(int c, string f_name);
 	void start_end_func(string symbol, int times);
 	void store_string_values(string s, int i, char c );
 	void store_values(float s, int i);

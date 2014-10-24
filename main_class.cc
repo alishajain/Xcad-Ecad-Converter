@@ -255,43 +255,57 @@ void select::Write_file()
 		}
 		else if(type[j] == "Box")
 		{
-		    float c_x, c_y, c_z, l_x, l_y, l_z, dc_x, dc_y, dc_z, r_x, r_y, r_z, d;
+		    //initialize coordinates of centroid
+		    float cx = values[j]/2.00, cy = values[j+1]/2.00, cz = values[j+2]/2.00;
+		    //take a point (dx,dy,dz) on longitudinal axis
+                    float dx = cx,dz=values[j+2],dy= cy;
+		    //points (x,y,z) and (xx,yy,zz) are required for calculations
+                    float x=cx,y=cy,z=cz,xx=dx,yy=dy,zz=dz;
+	            //change angle from degree to radian
+                    values[j+6]*=(3.14)/180;
+                    values[j+7]=(3.14)/180;
+                    values[j+8]*=(3.14)/180;
+		    
+                    float sinx=sin(values[j+6]), cosx=cos(values[j+6]), siny = sin(values[j+7]), cosy = cos(values[j+7]), sinz=sin(values[j+8]), cosz=cos(values[j+8]);
+                //rotation about x-axis
+                    cy = y*cosx-z*sinx;
+                    dy = yy*cosx-zz*sinx;
+                    cz = y*sinx+z*cosx;
+                    dz = yy*sinx+zz*cosx;
+                    y = cy;z=cz; yy=dy;zz=dz;
 
-		// Calculate length of cuboid along coordinate axis
-		    l_x = values[j];
-                    l_y = values[j+1];
-                    l_z = values[j+2];
+                //rotation about y-axis
+                    cx = z*siny+x*cosy;
+                    cz = z*cosy-x*siny;
+                    x=cx;z=cz;
+                    dx = zz*siny+xx*cosy;
+                    dz = zz*cosy-xx*siny;
+                    xx=dx;zz=dz;
 
-		// Calculate centroid of cuboid
-		    c_x = values[j+3] + (values[j])/2;
-                    c_y = values[j+4] + (values[j+1])/2;
-                    c_z = values[j+5] + (values[j+2])/2;
+                //rotation about z-axis
+                   cx = x*cosz-y*sinz;
+                   cy = x*sinz+y*cosz;
+                   x=cx;y=cy;
+                   dx = xx*cosz-yy*sinz;
+                   dy = xx*sinz+dy*cosz;
+                   xx=dx;yy=dy;
 
-                    d = sqrt( pow(l_x, 2) + pow(l_y, 2) + pow(l_z, 2) );
-
-		// Calculate direction cosines of longitudinal axis of cuboid 
-                    dc_x = l_x/d;
-                    dc_y = l_y/d;
-                    dc_z = l_z/d;
-
-		// Write coordinates of centroid
-                    WriteEcad_values(c_x);
-                    WriteEcad_values(c_y);
-                    WriteEcad_values(c_z);
-
-		// Write lengths along axis
-                    WriteEcad_values(l_x);
-                    WriteEcad_values(l_y);
-                    WriteEcad_values(l_z);
-
-		// Write direction cosines of longitudinal axis 
-                    WriteEcad_values(dc_x);
-                    WriteEcad_values(dc_y);
-                    WriteEcad_values(dc_z);
-
+                //translation
+                   cx+= values[j+3]; cy+=values[j+4]; cz+=values[j+5];
+		//length of axis between (cx,cy,cz) and (dx,dy,dz)
+                   float axis = sqrt(pow((x-xx),2)+pow((y-yy),2)+pow((z-zz),2));
+		 WriteEcad_values(cx);
+         	 WriteEcad_values(cy);
+		 WriteEcad_values(cz);
+		 WriteEcad_values(values[j]);
+		 WriteEcad_values(values[j+1]);
+		 WriteEcad_values(values[j+2]); 
+		 WriteEcad_values((x-xx)/axis); 
+                 WriteEcad_values((y-yy)/axis); 
+		 WriteEcad_values((z-zz)/axis);
 		}
 
-		WriteEcad_material(col_mat, j+1);	// Write material of entity
+		WriteEcad_material(col_mat, j+1);
 	    }
 	}
 	else
@@ -395,4 +409,3 @@ void select::Write_file()
 	    }
 	}
 }
-

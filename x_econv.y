@@ -35,7 +35,6 @@ It is particularly used when we need to used more than one type
 %token <c> entity_type entity_name col_mat
 %token <f> values
 
-
 %%
 
 /* Grammer rules

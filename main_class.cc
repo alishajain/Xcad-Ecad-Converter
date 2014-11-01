@@ -263,7 +263,7 @@ void select::Write_file()
                     float x=cx,y=cy,z=cz,xx=dx,yy=dy,zz=dz;
 	            //change angle from degree to radian
                     values[j+6]*=(3.14)/180;
-                    values[j+7]=(3.14)/180;
+                    values[j+7]*=(3.14)/180;
                     values[j+8]*=(3.14)/180;
 		    
                     float sinx=sin(values[j+6]), cosx=cos(values[j+6]), siny = sin(values[j+7]), cosy = cos(values[j+7]), sinz=sin(values[j+8]), cosz=cos(values[j+8]);
